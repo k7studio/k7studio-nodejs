@@ -1,0 +1,52 @@
+name: Deploy K7 Studio to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout do repositório
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js no GitHub runner
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      # 3. Instalar dependências
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build otimizado
+      - name: Run build
+        run: npm run build
+
+      # 5. Validar com Lighthouse
+      - name: Run validation
+        run: npm run validate
+
+      # 6. Upload Logs
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: logs/
+
+      # 7. Deploy para Cloudflare Pages
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: k7studio
+          directory: build
+

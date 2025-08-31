@@ -1,0 +1,56 @@
+name: Deploy K7 Studio Node.js
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout do repositório
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js (usando cache para acelerar)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      # 3. Instala dependências
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Executa build (equivale ao antigo optimize-projeto.sh)
+      - name: Run build script
+        run: npm run build
+
+      # 5. Executa validação com Lighthouse (equivale ao validate-deploy.sh)
+      - name: Run validation script
+        run: npm run validate
+
+      # 6. Upload de logs como artefatos
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: logs/
+
+      # 7. Deploy para GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          commit_message: "deploy: publicar build automatizado"
+
+      # 8. Rollback em falhas (opcional, usando script Node.js backup rollback)
+      - name: Rollback on failure
+        if: failure()
+        run: npm run backup:rollback
+

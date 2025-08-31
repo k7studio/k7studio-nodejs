@@ -1,0 +1,54 @@
+# Ignorar arquivos locais e sensíveis
+local.env
+.env
+.env.local
+.env.*.local
+
+# Ignorar diretórios de build, logs e backups
+build/
+backup/
+backup/**/*.zip
+logs/
+
+# Dependências Node.js
+node_modules/
+
+# Diretórios e arquivos temporários comumente gerados
+dist/
+.cache/
+.tmp/
+temp/
+
+# Logs gerais
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos editoriais e temporários de IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Arquivos temporários comuns de editores
+*~
+*.swp
+*.bak
+*.tmp
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Outras saídas de ferramentas comuns (ex: cobertura de teste)
+coverage/
+reports/
+
+# Ignore pacotes do Bower ou outras ferramentas antigas
+bower_components/
+
+# Não ignore package-lock.json (mantém reprodutibilidade de dependências)
+# Caso queira, pode garantir versão exata com package-lock.json
+
+

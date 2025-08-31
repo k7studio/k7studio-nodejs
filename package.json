@@ -1,0 +1,38 @@
+{
+  "name": "k7studio",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Projeto K7 Studio",
+  "main": "index.js",
+  "scripts": {
+    "analyze-images": "node scripts/analyze-images.js",
+    "build": "node scripts/build.js",
+    "replace-refs": "node scripts/replace-build-refs.js",
+    "backup": "node scripts/backup.js",
+    "backup:rollback": "node scripts/backup.js rollback",
+    "validate": "node scripts/validate.js",
+    "full-build": "node scripts/full-build.js",
+    "partial-build": "node scripts/partial-build.js",
+    "check-status": "node scripts/check-status.js",
+    "start": "node scripts/server.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "clean-css": "^5.3.3",
+    "critical": "^7.2.1",
+    "express": "^4.18.2",
+    "fs-extra": "^11.3.1",
+    "html-minifier-terser": "^7.2.0",
+    "imagemin": "^9.0.1",
+    "imagemin-webp": "^8.0.0",
+    "penthouse": "^2.3.3",
+    "puppeteer": "^20.7.2",
+    "sharp": "^0.34.3",
+    "terser": "^5.43.1"
+  },
+  "devDependencies": {
+    "chrome-launcher": "^1.2.0",
+    "lighthouse": "^12.8.1"
+  }
+}
+

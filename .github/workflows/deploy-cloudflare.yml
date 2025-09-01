@@ -28,20 +28,19 @@ jobs:
 
       # 4. Build otimizado
       - name: Run build
-        run: npm run build
+        run: |
+          npm run build
+          npm run replace-refs
+          npm run validate
 
-      # 5. Validar com Lighthouse
-      - name: Run validation
-        run: npm run validate
-
-      # 6. Upload Logs
+      # 5. Upload Logs
       - name: Upload logs
         uses: actions/upload-artifact@v4
         with:
           name: logs
           path: logs/
 
-      # 7. Deploy para Cloudflare Pages
+      # 6. Deploy para Cloudflare Pages
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:

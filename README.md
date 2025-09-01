@@ -16,7 +16,8 @@
 - Geração de Critical CSS  
 - Atualização incremental de conteúdo  
 - Rotinas de backup e rollback com logs padronizados  
-- Ajuste automático das referências no HTML para arquivos otimizados (CSS, JS e imagens) 
+- Ajuste automático das referências no HTML para arquivos otimizados (CSS, JS e imagens)
+- Correção automática das URLs em CSS, ajustando caminhos e extensões para WebP otimizados
 
 ### SCI/CD no GitHub Actions rodando em ambiente Node.js nativo, sem necessidade de imagem Docker.
 
@@ -90,6 +91,7 @@ npm run replace-build-refs
 ```
 
 - Atualiza o arquivo `build/index.html` para apontar para os arquivos minificados `style.min.css`, `app.min.js` e para as imagens otimizadas em `img/opt/`  
+- Corrige URLs relativas dentro do CSS para apontar para imagens WebP otimizadas se existirem
 - Evita erros de carregamento de recursos no navegador  
 - Gera arquivo de status `.done` e logs específicos
 
@@ -168,7 +170,7 @@ npm run preview
 ```
 npm run backup:create
 git add .
-git commit -m "chore: atualização incremental"
+git commit -m "Atualização incremental"
 git push origin main
 ```
 
@@ -189,8 +191,13 @@ git push origin main
 ### 1. Build completo
 
 ```
+npm run build
+```
+ou
+```
 node scripts/build.js
 ```
+- Este passo prepara os arquivos otimizados na pasta build/.
 - Script principal do build completo:
   - Limpa pasta `build/`.
   - Minifica CSS (css/style.css) para build/style.min.css usando CleanCSS.
@@ -205,15 +212,20 @@ node scripts/build.js
 - Gera log detalhado em `logs/build_*.log`
 
 ### 2. Substituir referências no HTML do build
-
+- Depois do build, é necessário corrigir as referências para carregar as versões otimizadas corretamente, incluindo ajustes no HTML e CSS:
+```
+npm run replace-build-refs
+```
+ou
 ```
 node scripts/replace-build-refs.js
 ```
-- Atualiza referências no build/index.html:
-  - Troca href css/style.css por style.min.css.
-  - Troca src js/main.js por app.min.js.
+- Atualiza caminhos de CSS, JS e imagens no `build/index.html`:
+  - Troca href `css/style.css` por `style.min.css`.
+  - Troca src `js/main.js`por `app.min.js`.
   - Altera src de imagens jpg/png/webp para apontar para img/opt/.
-- Gera arquivo de status logs/replace-build-refs.done após sucesso.
+- Corrige URLs relativas no CSS para apontar para imagens WebP otimizadas quando disponíveis.  
+- Gera arquivo de status `logs/replace-build-refs.done` após sucesso.
 - Utiliza expressões regulares para substituir paths.
 - Usa logger para etapas e erros.
 

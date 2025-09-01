@@ -17,7 +17,7 @@ async function replaceRefs() {
 
     // Replace CSS and JS references in HTML
     html = html.replace(/href=["']css\/style\.css["']/g, 'href="style.min.css"');
-    html = html.replace(/src=["']js\/main\.js["']/g, 'src="app.js"');
+    html = html.replace(/src=["']js\/main\.js["']/g, 'src="app.min.js"');
 
     // Replace img src references in HTML to point to optimized folder
     html = html.replace(/src=["']([^"']+\.(jpg|png|webp))["']/gi, (match, p1) => {

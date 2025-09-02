@@ -30,8 +30,9 @@ jobs:
       - name: Run build
         run: |
           npm run build
-          npm run replace-refs
-          npm run validate
+          npm run replace-build-refs
+          npm run update-image-refs          
+          npm run validate -- --url=https://k7studio-nodejs.pages.dev
 
       # 5. Upload Logs
       - name: Upload logs

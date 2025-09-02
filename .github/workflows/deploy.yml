@@ -34,21 +34,25 @@ jobs:
       - name: Run replace-build-refs script
         run: npm run replace-build-refs
 
-      # 6. Validar build com Lighthouse usando URL pública configurada para Cloudflare Pages
+      # 6. Executar script update-image-refs para que o HTML final referencie as versões geradas pelo pipeline responsivo
+      - name: Atualizar imagens para srcset/WebP
+        run: npm run update-image-refs
+
+       # 7. Validar build com Lighthouse usando URL pública configurada para Cloudflare Pages
       #    Adaptar a variável URL_TO_TEST conforme o domínio Cloudflare configurado
       - name: Run validation script
         run: |
           export URL_TO_TEST="https://k7studio-nodejs.pages.dev"
           npm run validate -- --url=$URL_TO_TEST
 
-      # 7. Upload dos logs como artefatos para análise posterior
+      # 8. Upload dos logs como artefatos para análise posterior
       - name: Upload logs
         uses: actions/upload-artifact@v4
         with:
           name: logs
           path: logs/
 
-      # 8. Deploy para GitHub Pages (se ainda for usado para preview/homolog)
+      # 9. Deploy para GitHub Pages (se ainda for usado para preview/homolog)
       #    Se workflow paralelo Cloudflare Pages for usado para produção, pode ser removido
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -57,7 +61,7 @@ jobs:
           publish_dir: ./build
           commit_message: "deploy: publicar build automatizado"
 
-      # 9. Rollback automático em caso de falha na pipeline
+      # 10. Rollback automático em caso de falha na pipeline
       - name: Rollback on failure
         if: failure()
         run: npm run backup:rollback

@@ -1,50 +1,49 @@
-import lighthouse from "lighthouse";
-import * as chromeLauncher from "chrome-launcher";
-import fs from "fs-extra";
-import path from "path";
-import { createLogger } from "./utils/logger.js";
+import lighthouse from 'lighthouse';
+import { launch } from 'chrome-launcher';
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
+import fs from 'fs';
 
-const log = createLogger("validate");
-const LOG_DONE_FILE = path.resolve("logs/validate.done");
+async function runLighthouse(url) {
+  console.log(`Starting Lighthouse for URL: ${url}`);
 
-async function runLighthouse(url = "http://localhost:8080") {
-  const chrome = await chromeLauncher.launch({
-    chromeFlags: [
-      "--headless",
-      "--no-sandbox",
-      "--disable-gpu",
-      "--disable-dev-shm-usage",
-      "--no-zygote",
-    ],
-  });
+const chrome = await launch({ chromeFlags: ['--headless'] });
+const options = {
+  logLevel: 'info',
+  output: 'html',
+  port: chrome.port,
+  onlyCategories: ['performance', 'seo', 'best-practices'],
+};
 
-  try {
-    log.info("Chrome iniciado em modo headless");
-    const options = { port: chrome.port, output: "html" };
-    const runnerResult = await lighthouse(url, options);
+  const runnerResult = await lighthouse(url, options);
+  const reportHtml = runnerResult.report;
 
-    log.info(`Performance: ${runnerResult.lhr.categories.performance.score * 100}`);
-    log.info(`Best Practices: ${runnerResult.lhr.categories['best-practices'].score * 100}`);
-    log.info(`SEO: ${runnerResult.lhr.categories.seo.score * 100}`);
+  fs.writeFileSync('logs/lighthouse-report.html', reportHtml);
+  console.log('Lighthouse report saved as logs/lighthouse-report.html');
 
-    await chrome.kill();
+  // Log metrics summary
+  const categories = runnerResult.lhr.categories;
+  console.log(`Performance: ${categories.performance.score * 100}`);
+  console.log(`Best Practices: ${categories['best-practices'].score * 100}`);
+  console.log(`SEO: ${categories.seo.score * 100}`);
 
-    await fs.outputFile("logs/lighthouse-report.html", runnerResult.report);
-    log.info("Relatório salvo em logs/lighthouse-report.html");
+  await chrome.kill();
 
-    // Grava arquivo .done para sinalizar sucesso
-    await fs.writeFile(LOG_DONE_FILE, new Date().toISOString(), "utf-8");
-    log.info(`Arquivo de status criado: ${LOG_DONE_FILE}`);
-
-  } catch (err) {
-    log.error(`Erro no Lighthouse: ${err.message}`);
-    await chrome.kill();
-    process.exit(1);
-  }
+  // Create done file flag
+  fs.writeFileSync('logs/validate.done', new Date().toISOString());
 }
 
-runLighthouse().catch((err) => {
-  log.error(`Falha na execução do validate.js: ${err.message}`);
+const argv = yargs(hideBin(process.argv))
+  .option('url', {
+    type: 'string',
+    description: 'URL to test with Lighthouse',
+    demandOption: true,
+  })
+  .help()
+  .argv;
+
+runLighthouse(argv.url).catch((err) => {
+  console.error(`Error running Lighthouse: ${err.message}`);
   process.exit(1);
 });
 

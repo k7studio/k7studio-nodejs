@@ -7,14 +7,17 @@
   "scripts": {
     "analyze-images": "node scripts/analyze-images.js",
     "build": "node scripts/build.js",
-    "replace-refs": "node scripts/replace-build-refs.js",
+    "replace-build-refs": "node scripts/replace-build-refs.js",
     "backup": "node scripts/backup.js",
     "backup:rollback": "node scripts/backup.js rollback",
     "validate": "node scripts/validate.js",
     "full-build": "node scripts/full-build.js",
     "partial-build": "node scripts/partial-build.js",
     "check-status": "node scripts/check-status.js",
-    "start": "node scripts/server.js"
+    "start": "node scripts/server.js",
+    "preview": "node scripts/server.js",
+    "server": "node scripts/server.js",
+    "update-image-refs": "node scripts/update-image-refs.js"
   },
   "dependencies": {
     "cheerio": "^1.1.2",

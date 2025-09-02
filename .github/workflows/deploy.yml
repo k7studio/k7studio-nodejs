@@ -11,37 +11,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout do repositório
+      # 1. Checkout do código
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js (usando cache para acelerar)
+      # 2. Setup Node.js 18 com cache npm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
-      # 3. Instala dependências
+      # 3. Instalar dependências
       - name: Install dependencies
         run: npm ci
 
-      # 4. Executa build (equivale ao antigo optimize-projeto.sh)
+      # 4. Executar build completo (minificação, imagens, etc)
       - name: Run build script
         run: npm run build
 
-      # 5. Executa validação com Lighthouse (equivale ao validate-deploy.sh)
-      - name: Run validation script
-        run: npm run validate
+      # 5. Executar script replace-build-refs para corrigir referências no build
+      - name: Run replace-build-refs script
+        run: npm run replace-build-refs
 
-      # 6. Upload de logs como artefatos
+      # 6. Validar build com Lighthouse usando URL pública configurada para Cloudflare Pages
+      #    Adaptar a variável URL_TO_TEST conforme o domínio Cloudflare configurado
+      - name: Run validation script
+        run: |
+          export URL_TO_TEST="https://k7studio-nodejs.pages.dev"
+          npm run validate -- --url=$URL_TO_TEST
+
+      # 7. Upload dos logs como artefatos para análise posterior
       - name: Upload logs
         uses: actions/upload-artifact@v4
         with:
           name: logs
           path: logs/
 
-      # 7. Deploy para GitHub Pages
+      # 8. Deploy para GitHub Pages (se ainda for usado para preview/homolog)
+      #    Se workflow paralelo Cloudflare Pages for usado para produção, pode ser removido
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -49,7 +57,7 @@ jobs:
           publish_dir: ./build
           commit_message: "deploy: publicar build automatizado"
 
-      # 8. Rollback em falhas (opcional, usando script Node.js backup rollback)
+      # 9. Rollback automático em caso de falha na pipeline
       - name: Rollback on failure
         if: failure()
         run: npm run backup:rollback

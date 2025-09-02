@@ -27,9 +27,9 @@
     "fs-extra": "^11.3.1",
     "html-minifier-terser": "^7.2.0",
     "imagemin": "^9.0.1",
-    "imagemin-webp": "^8.0.0",
+    "imagemin-webp": "^6.1.0",
     "penthouse": "^2.3.3",
-    "puppeteer": "^20.7.2",
+    "puppeteer": "^24.18.0",
     "sharp": "^0.34.3",
     "terser": "^5.43.1"
   },
@@ -38,4 +38,3 @@
     "lighthouse": "^12.8.1"
   }
 }
-

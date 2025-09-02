@@ -9,12 +9,12 @@ const BUILD_DIR = path.resolve("build");
 const HTML_PATH = path.join(BUILD_DIR, "index.html");
 const IMG_OPT_DIR = path.join(BUILD_DIR, "img", "opt");
 
-// Lista os arquivos de largura disponível para um baseName
+// Função para listar larguras disponíveis para srcset baseado no nome base
 function listAvailableWidths(baseName) {
   try {
     const files = fs.readdirSync(IMG_OPT_DIR);
     const widths = files
-      .map((file) => {
+      .map(file => {
         const match = file.match(new RegExp(`^${baseName}-(\\d+)w\\.webp$`));
         return match ? Number(match[1]) : null;
       })
@@ -38,30 +38,26 @@ async function updateImageRefs() {
       let src = img.attr("src");
 
       if (!src || !src.startsWith("img/")) {
-        // Opcional: log para imagens externas ou outras pastas
+        // Imagens externas ou outras pastas ignoradas
         return;
       }
 
       const ext = path.extname(src);
       const baseName = path.basename(src, ext);
+      const mainWebpPath = path.join(IMG_OPT_DIR, `${baseName}.webp`);
 
-      const hasWebpMain = fs.existsSync(path.join(IMG_OPT_DIR, `${baseName}.webp`));
-      if (!hasWebpMain) {
+      if (!fs.existsSync(mainWebpPath)) {
         log.warn(`Arquivo principal WebP não encontrado para ${baseName}, mantendo src original.`);
         return;
       }
 
       const widths = listAvailableWidths(baseName);
-      if (widths.length === 0) {
-        log.warn(`Nenhuma versão WebP para srcset encontrada para ${baseName}, utilizando apenas principal.`);
+
+      let srcsetEntries = null;
+      if (widths.length > 0) {
+        srcsetEntries = widths.map(w => `img/opt/${baseName}-${w}w.webp ${w}w`).join(", ");
       }
 
-      // Monta srcset somente se houver larguras
-      const srcsetEntries = widths.length > 0
-        ? widths.map(w => `img/opt/${baseName}-${w}w.webp ${w}w`).join(", ")
-        : null;
-
-      // Atualização dos atributos
       img.attr("src", `img/opt/${baseName}.webp`);
       if (srcsetEntries) {
         img.attr("srcset", srcsetEntries);

@@ -15,11 +15,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js 18 com cache npm
+      # 2. Setup Node.js 20 com cache npm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
 
       # 3. Instalar dependências
@@ -52,16 +52,7 @@ jobs:
           name: logs
           path: logs/
 
-      # 9. Deploy para GitHub Pages (se ainda for usado para preview/homolog)
-      #    Se workflow paralelo Cloudflare Pages for usado para produção, pode ser removido
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
-          commit_message: "deploy: publicar build automatizado"
-
-      # 10. Rollback automático em caso de falha na pipeline
+      # 9. Rollback automático em caso de falha na pipeline
       - name: Rollback on failure
         if: failure()
         run: npm run backup:rollback

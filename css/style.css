@@ -743,3 +743,45 @@ a:hover {
 .social-icons a:hover {
     transform: translateY(-3px);
 }
+
+/* style.css */
+
+/* Estilo do botão Back to Top */
+#backToTop {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  width: 56px;
+  height: 56px;
+  background: #5d5f2c;
+  color: #cdcdbb;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  cursor: pointer;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+#backToTop.visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.back-to-top-arrow {
+  font-size: 2rem;
+  transition: color 0.3s ease;
+}
+
+#backToTop:hover {
+  background: #6b6c50;
+  color: #fff;
+}
+

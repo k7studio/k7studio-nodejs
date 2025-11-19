@@ -16,3 +16,24 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         document.querySelector('.mobile-menu').classList.add('hidden');
     });
 });
+
+// Exibe o botão só ao rolar a página
+
+document.addEventListener("DOMContentLoaded", function () {
+  const backToTop = document.getElementById('backToTop');
+
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 200) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
+    }
+  });
+
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+});
